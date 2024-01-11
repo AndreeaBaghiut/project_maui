@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="p3.RecipePage"
              xmlns:local="clr-namespace:p3"
-             Title="Recipe Page">
+             Title="Recipe">
 
     <StackLayout Margin="20">
         <Editor Placeholder="Enter the title of the recipe"
                 Text="{Binding Title}"
-                HeightRequest="50">
-        </Editor>
+                HeightRequest="50" />
 
         <Editor Placeholder="Enter the description of the recipe"
                 Text="{Binding Description}"
@@ -33,6 +32,8 @@
             <Button Grid.Column="1" Text="Delete" Clicked="OnDeleteButtonClicked" />
         </Grid>
 
+        <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked"/>
+
         <ListView x:Name="recipeView" Margin="20">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -40,7 +41,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked"/>
     </StackLayout>
 </ContentPage>

@@ -8,22 +8,16 @@
 
     <TabBar>
         <ShellContent
- Title="Welcome"
- ContentTemplate="{DataTemplate local:MainPage}"
- />
+             Title="Welcome back"
+             ContentTemplate="{DataTemplate local:MainPage}"
+             />
         <ShellContent
- Title="About"
- ContentTemplate="{DataTemplate local:AboutPage}"
- />
-
+             Title="About"
+             ContentTemplate="{DataTemplate local:AboutPage}"
+             />
         <ShellContent
- Title="Recipes"
- ContentTemplate="{DataTemplate local:RecipeEntryPage}"
- />
-
-
-
+             Title="My saved recipes"
+             ContentTemplate="{DataTemplate local:RecipeEntryPage}"
+             /> 
     </TabBar>
-
-
 </Shell>

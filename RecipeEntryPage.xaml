@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:p3.Converters;assembly=p3"
              x:Class="p3.RecipeEntryPage"
-             Title="RecipeEntryPage">
+             Title="Recipes">
 
     <ContentPage.Resources>
         <converters:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter" />

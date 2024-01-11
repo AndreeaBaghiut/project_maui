@@ -17,18 +17,17 @@ namespace p3.Data
         public RecipeDatabase(string dbPath)
         {
             _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Recipe>().GetAwaiter().GetResult();
+            _database.CreateTableAsync<Recipe>().Wait();
             _database.CreateTableAsync<Ingredient>().Wait();
             _database.CreateTableAsync<RecipeIngredient>().Wait();
-
         }
 
-        public async Task InitializeAsync()
-        {
-            await _database.CreateTableAsync<Recipe>().ConfigureAwait(false);
-            await _database.CreateTableAsync<Ingredient>().ConfigureAwait(false);
-            await _database.CreateTableAsync<RecipeIngredient>().ConfigureAwait(false);
-        }
+       // public async Task InitializeAsync()
+        //{
+          //  await _database.CreateTableAsync<Recipe>().ConfigureAwait(false);
+            //await _database.CreateTableAsync<Ingredient>().ConfigureAwait(false);
+            //await _database.CreateTableAsync<RecipeIngredient>().ConfigureAwait(false);
+        //}
 
         public Task<List<Recipe>> GetRecipeAsync()
         {
@@ -79,15 +78,15 @@ namespace p3.Data
             return _database.Table<Ingredient>().ToListAsync();
         }
 
-        public Task<int> SaveRecipeIngredientAsync(Recipe rec)
+        public Task<int> SaveRecipeIngredientAsync(RecipeIngredient recin)
         {
-            if (rec.Id != 0)
+            if (recin.Id != 0)
             {
-                return _database.UpdateAsync(rec);
+                return _database.UpdateAsync(recin);
             }
             else
             {
-                return _database.InsertAsync(rec);
+                return _database.InsertAsync(recin);
             }
         }
 
@@ -95,8 +94,8 @@ namespace p3.Data
         {
             return _database.QueryAsync<Ingredient>(
                 "SELECT I.Id, I.Description FROM Ingredient I" +
-                " INNER JOIN RecipeIngredient RI ON I.Id = RI.IngredientId" +
-                " WHERE RI.RecipeId = ?",
+                " INNER JOIN RecipeIngredient RI"
+                + " on I.Id = RI.IngredientId where RI.RecipeId = ?",
                 recipeId);
         }
 

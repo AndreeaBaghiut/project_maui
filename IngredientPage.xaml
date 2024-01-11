@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="p3.IngredientPage"
-             Title="IngredientPage">
+             Title="Ingredient Page">
     <ContentPage.Content>
         <StackLayout Margin="20">
             <Editor Placeholder="Enter an ingredient" Margin="20"

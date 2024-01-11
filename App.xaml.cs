@@ -14,9 +14,11 @@ namespace p3
             {
                 if (database == null)
                 {
-                    string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Recipe.db3");
-                    database = new RecipeDatabase(dbPath);
-                    InitializeDatabaseAsync();
+                    // string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Recipe.db3");
+                    database = new
+RecipeDatabase(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.
+LocalApplicationData), "Recipe.db3"));
+
                 }
                 return database;
             }
@@ -29,12 +31,12 @@ namespace p3
             MainPage = new AppShell();
         }
 
-        private static async void InitializeDatabaseAsync()
-        {
-            if (database != null)
-            {
-                await database.InitializeAsync();
-            }
-        }
+       // private static async void InitializeDatabaseAsync()
+        //{
+          //  if (database != null)
+            //{
+              //  await database.InitializeAsync();
+            //}
+        //}
     }
 }

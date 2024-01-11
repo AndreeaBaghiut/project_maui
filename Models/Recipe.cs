@@ -18,7 +18,8 @@ namespace p3.Models
         public string? Description { get; set; }
         public byte[]? ImageData { get; set; }
 
-        [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<RecipeIngredient>? RecipeIngredients { get; set; }
+       // [OneToMany(CascadeOperations = CascadeOperation.All)]
+        //public List<RecipeIngredient>? RecipeIngredients { get; set; }
+
     }
 }

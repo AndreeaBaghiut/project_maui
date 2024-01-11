@@ -84,18 +84,21 @@ namespace p3
             {
                 var recipe = (Recipe)BindingContext;
 
-                if (recipe.ImageData != null)
+                if (recipe == null)
                 {
-                    await App.Database.SaveRecipeAsync(recipe);
-                }
-                else
-                {
-                    Console.WriteLine("ImageData is null");
+                    Console.WriteLine("Recipe is null");
+                    return;
                 }
 
-                if (recipeImage.Source is StreamImageSource)
+                if (recipe.ImageData == null)
                 {
-                    using (var stream = await ((StreamImageSource)recipeImage.Source).Stream.Invoke(new System.Threading.CancellationToken()))
+                    Console.WriteLine("ImageData is null");
+                    return;
+                }
+
+                if (recipeImage.Source is StreamImageSource streamImageSource)
+                {
+                    using (var stream = await streamImageSource.Stream.Invoke(new System.Threading.CancellationToken()))
                     using (var memoryStream = new MemoryStream())
                     {
                         await stream.CopyToAsync(memoryStream);
@@ -104,8 +107,7 @@ namespace p3
                 }
                 else if (recipeImage.Source is FileImageSource fileImageSource && fileImageSource.File != null)
                 {
-                    var imagePath = fileImageSource.File;
-                    recipe.ImageData = File.ReadAllBytes(imagePath);
+                    recipe.ImageData = File.ReadAllBytes(fileImageSource.File);
                 }
 
                 await App.Database.SaveRecipeAsync(recipe);
@@ -128,6 +130,8 @@ namespace p3
             }
         }
 
+
+
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
             var recipe = (Recipe)BindingContext;
@@ -137,7 +141,7 @@ namespace p3
 
         async void OnChooseButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new IngredientPage((Recipe)BindingContext, this)
+            await Navigation.PushAsync(new IngredientPage((Recipe)this.BindingContext)
             {
                 BindingContext = new Ingredient()
             });
@@ -147,29 +151,45 @@ namespace p3
         {
             base.OnAppearing();
 
+            if (BindingContext == null || !(BindingContext is Recipe recipe))
+            {
+                return;
+            }
+
             try
             {
-                if (BindingContext == null || !(BindingContext is Recipe reciper))
+                var recipes = await App.Database.GetRecipeAsync();
+
+                if (recipes != null)
                 {
-                    return;
+                    recipeView.ItemsSource = recipes;
                 }
-
-                if (reciper.ImageData != null)
+                else
                 {
-                    recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(reciper.ImageData));
-                }
-
-                if (reciper.Id != 0)
-                {
-                    BindingContext = await App.Database.GetRecipeAsync(reciper.Id);
-                    reciper = (Recipe)BindingContext;
-
-                    if (reciper.ImageData != null)
+                    recipeImage.Source = await Task.Run(() =>
                     {
-                        recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(reciper.ImageData));
-                    }
+                        var recipe = (Recipe)BindingContext;
 
-                    recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(reciper.Id);
+                        if (recipe.ImageData != null)
+                        {
+                            return ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
+                        }
+
+                        return null;
+                    });
+
+                    if (recipe.Id != 0)
+                    {
+                        BindingContext = await App.Database.GetRecipeAsync(recipe.Id);
+                        recipe = (Recipe)BindingContext;
+
+                        recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
+                    }
+                }
+
+                if (recipeImage.Source == null)
+                {
+                    recipeImage.Source = ImageSource.FromResource("p3.Assets.NoImageAvailable.png");
                 }
             }
             catch (Exception ex)
@@ -177,5 +197,6 @@ namespace p3
                 Console.WriteLine($"Exception in OnAppearing: {ex.Message}");
             }
         }
+
     }
 }

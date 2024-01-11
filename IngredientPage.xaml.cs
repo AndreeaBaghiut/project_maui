@@ -5,13 +5,12 @@ namespace p3
     public partial class IngredientPage : ContentPage
     {
         Recipe r;
-        RecipePage recipePage;
+        //RecipePage recipePage;
 
-        public IngredientPage(Recipe rec, RecipePage recipePage)
+        public IngredientPage(Recipe rec)
         {
             InitializeComponent();
             r = rec;
-            this.recipePage = recipePage;
         }
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
@@ -23,11 +22,9 @@ namespace p3
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            if (BindingContext is Ingredient ingredient)
-            {
-                await App.Database.DeleteIngredientAsync(ingredient);
-                recipeView.ItemsSource = await App.Database.GetIngredientsAsync();
-            }
+            var ingredient = (Ingredient)BindingContext;
+            await App.Database.DeleteIngredientAsync(ingredient);
+            recipeView.ItemsSource = await App.Database.GetIngredientsAsync();
         }
 
         protected override async void OnAppearing()
@@ -38,23 +35,43 @@ namespace p3
 
         async void OnAddButtonClicked(object sender, EventArgs e)
         {
-            if (recipeView.SelectedItem is Ingredient selectedIngredient)
+            Ingredient i;
+
+            if (recipeView.SelectedItem != null)
             {
-                var existingRecipeIngredient = r.RecipeIngredients.Find(ri => ri.IngredientId == selectedIngredient.Id);
+                i = recipeView.SelectedItem as Ingredient;
 
-                if (existingRecipeIngredient == null)
+                var rp = new RecipeIngredient()
                 {
-                    r.RecipeIngredients.Add(new RecipeIngredient
-                    {
-                        RecipeId = r.Id,
-                        IngredientId = selectedIngredient.Id
-                    });
+                    RecipeId = r.Id,
+                    IngredientId = i.Id
+                };
 
-                    await App.Database.SaveRecipeAsync(r);
-                }
+                await App.Database.SaveRecipeIngredientAsync(rp);
+                i.RecipeIngredients = new List<RecipeIngredient> { rp };
 
-                await Navigation.PopModalAsync();
+                await Navigation.PopAsync();
             }
         }
+
+        //{
+        //  if (recipeView.SelectedItem is Ingredient selectedIngredient)
+        //{
+        //  var existingRecipeIngredient = r.RecipeIngredients.Find(ri => ri.IngredientId == selectedIngredient.Id);
+
+        //if (existingRecipeIngredient == null)
+        //{
+        //  r.RecipeIngredients.Add(new RecipeIngredient
+        //{
+        //  RecipeId = r.Id,
+        //IngredientId = selectedIngredient.Id
+        //});
+
+        //await App.Database.SaveRecipeAsync(r);
+        //}
+
+        //await Navigation.PopModalAsync();
+        //}
+        //}
     }
 }
