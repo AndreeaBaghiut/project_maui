@@ -90,6 +90,10 @@ namespace p3
                     return;
                 }
 
+                // Ensure category is set based on the selected item in the picker
+                recipe.Category = (RecipeCategory)categoryPicker.SelectedItem;
+
+
                 if (recipe.ImageData == null)
                 {
                     Console.WriteLine("ImageData is null");
@@ -150,8 +154,9 @@ namespace p3
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            var recipe = (Recipe)BindingContext;
 
-            if (BindingContext == null || !(BindingContext is Recipe recipe))
+            if (recipe == null)
             {
                 return;
             }
@@ -166,30 +171,28 @@ namespace p3
                 }
                 else
                 {
-                    recipeImage.Source = await Task.Run(() =>
-                    {
-                        var recipe = (Recipe)BindingContext;
-
-                        if (recipe.ImageData != null)
-                        {
-                            return ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
-                        }
-
-                        return null;
-                    });
+                    recipe.ImageData = new byte[0]; // Set default image data in case it's not set yet
+                    recipeImage.Source = ImageSource.FromResource("p3.Assets.NoImageAvailable.png"); // Display default image
 
                     if (recipe.Id != 0)
                     {
-                        BindingContext = await App.Database.GetRecipeAsync(recipe.Id);
-                        recipe = (Recipe)BindingContext;
+                        // Fetch the recipe's image data asynchronously
+                        Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
 
+                        // Wait for the image data to be retrieved
+                        await getDataTask;
+
+                        // Update the recipeImage's source if the image data is valid
+                        if (recipe.ImageData != null)
+                        {
+                            recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
+                        }
+
+                        // Retrieve the recipe ingredients and set them as the source of the recipeView list
                         recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
-                    }
-                }
+                        categoryPicker.SelectedItem = recipe.Category;
 
-                if (recipeImage.Source == null)
-                {
-                    recipeImage.Source = ImageSource.FromResource("p3.Assets.NoImageAvailable.png");
+                    }
                 }
             }
             catch (Exception ex)
@@ -197,6 +200,7 @@ namespace p3
                 Console.WriteLine($"Exception in OnAppearing: {ex.Message}");
             }
         }
+
 
     }
 }

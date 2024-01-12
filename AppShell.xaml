@@ -18,6 +18,10 @@
         <ShellContent
              Title="My saved recipes"
              ContentTemplate="{DataTemplate local:RecipeEntryPage}"
-             /> 
+             />
+        <ShellContent
+             Title="Categories"
+             ContentTemplate="{DataTemplate local:CategoryPage}"
+             />
     </TabBar>
 </Shell>

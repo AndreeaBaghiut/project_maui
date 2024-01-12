@@ -20,13 +20,15 @@ namespace p3.Data
             _database.CreateTableAsync<Recipe>().Wait();
             _database.CreateTableAsync<Ingredient>().Wait();
             _database.CreateTableAsync<RecipeIngredient>().Wait();
+            _database.CreateTableAsync<RecipeCategory>().Wait();
         }
 
-       // public async Task InitializeAsync()
+
+        // public async Task InitializeAsync()
         //{
-          //  await _database.CreateTableAsync<Recipe>().ConfigureAwait(false);
-            //await _database.CreateTableAsync<Ingredient>().ConfigureAwait(false);
-            //await _database.CreateTableAsync<RecipeIngredient>().ConfigureAwait(false);
+        //  await _database.CreateTableAsync<Recipe>().ConfigureAwait(false);
+        //await _database.CreateTableAsync<Ingredient>().ConfigureAwait(false);
+        //await _database.CreateTableAsync<RecipeIngredient>().ConfigureAwait(false);
         //}
 
         public Task<List<Recipe>> GetRecipeAsync()
@@ -99,6 +101,36 @@ namespace p3.Data
                 recipeId);
         }
 
+        public Task<List<RecipeCategory>> GetCategoriesAsync()
+        {
+            return _database.Table<RecipeCategory>().ToListAsync();
+        }
+
+        public Task<int> SaveCategoryAsync(RecipeCategory category)
+        {
+            if (category.Id != 0)
+            {
+                return _database.UpdateAsync(category);
+            }
+            else
+            {
+                return _database.InsertAsync(category);
+            }
+        }
+
+        public Task<List<Recipe>> GetRecipesByCategoryAsync(int categoryId)
+        {
+            return _database.Table<Recipe>().
+                Where(r => r.Category != null && r.Category.Id == categoryId).
+                ToListAsync();
+        }
+
+        public Task<RecipeCategory> GetCategoryByNameAsync(string categoryName)
+        {
+            return _database.Table<RecipeCategory>()
+                .Where(c => c.CategoryName == categoryName)
+                .FirstOrDefaultAsync();
+        }
 
 
     }

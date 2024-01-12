@@ -14,11 +14,14 @@ namespace p3.Models
        [PrimaryKey, AutoIncrement]
         public int Id  { get; set; }
         public string? Title { get; set; }
-        public string? Ingredients { get; set; }
-        public string? Description { get; set; }
-        public byte[]? ImageData { get; set; }
+        public string Ingredients { get; set; }
+        public string Description { get; set; }
+        public byte[] ImageData { get; set; }
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
+        public RecipeCategory? Category { get; set; }
 
-       // [OneToMany(CascadeOperations = CascadeOperation.All)]
+
+        // [OneToMany(CascadeOperations = CascadeOperation.All)]
         //public List<RecipeIngredient>? RecipeIngredients { get; set; }
 
     }

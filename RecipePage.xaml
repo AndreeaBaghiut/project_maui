@@ -2,10 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="p3.RecipePage"
-             xmlns:local="clr-namespace:p3"
+             xmlns:local="clr-namespace:p3.Models"
              Title="Recipe">
+         
 
     <StackLayout Margin="20">
+        
         <Editor Placeholder="Enter the title of the recipe"
                 Text="{Binding Title}"
                 HeightRequest="50" />
@@ -18,7 +20,6 @@
                 Text="{Binding Ingredients}"
                 HeightRequest="100" />
 
-        <Image x:Name="recipeImage" Source="{Binding ImageData, Converter={StaticResource ByteArrayToImageSourceConverter}}" Aspect="AspectFit" HeightRequest="150" />
 
         <Button Text="Select Image" Clicked="OnSelectImageButtonClicked" />
 
@@ -41,5 +42,20 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <Label Text="Select Category" />
+        <Picker x:Name="categoryPicker" SelectedItem="{Binding Category, Mode=TwoWay}" ItemDisplayBinding="{Binding CategoryName}">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type local:RecipeCategory}">
+                    <local:RecipeCategory CategoryName="Desert" />
+                    <local:RecipeCategory CategoryName="Mic-dejun" />
+                    <local:RecipeCategory CategoryName="Prânz" />
+                    <local:RecipeCategory CategoryName="Cină" />
+                    <local:RecipeCategory CategoryName="Festiv" />
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+
+        <Image x:Name="recipeImage" Source="{Binding ImageData, Converter={StaticResource ByteArrayToImageSourceConverter}}" Aspect="AspectFit" HeightRequest="150" />
     </StackLayout>
 </ContentPage>
