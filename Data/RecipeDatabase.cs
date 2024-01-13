@@ -120,9 +120,9 @@ namespace p3.Data
 
         public Task<List<Recipe>> GetRecipesByCategoryAsync(int categoryId)
         {
-            return _database.Table<Recipe>().
-                Where(r => r.Category != null && r.Category.Id == categoryId).
-                ToListAsync();
+            return _database.Table<Recipe>()
+                .Where(r => r.Category != null && r.Category.Id == categoryId)
+                .ToListAsync();
         }
 
         public Task<RecipeCategory> GetCategoryByNameAsync(string categoryName)

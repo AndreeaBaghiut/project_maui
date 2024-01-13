@@ -82,55 +82,46 @@ namespace p3
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            try
+            var recipe = (Recipe)BindingContext;
+
+            if (recipe == null)
             {
-                var recipe = (Recipe)BindingContext;
+                return;
+            }
 
-                if (recipe == null)
+            recipe.Category = (RecipeCategory)categoryPicker.SelectedItem;
+
+            if (recipe.ImageData == null)
+            {
+                return;
+            }
+
+            if (recipeImage.Source is StreamImageSource streamImageSource)
+            {
+                using (var stream = await streamImageSource.Stream.Invoke(new System.Threading.CancellationToken()))
+                using (var memoryStream = new MemoryStream())
                 {
-                    Console.WriteLine("Recipe is null");
-                    return;
-                }
-
-                recipe.Category = (RecipeCategory)categoryPicker.SelectedItem;
-
-                if (recipe.ImageData == null)
-                {
-                    Console.WriteLine("ImageData is null");
-                    return;
-                }
-
-                if (recipeImage.Source is StreamImageSource streamImageSource)
-                {
-                    using (var stream = await streamImageSource.Stream.Invoke(new System.Threading.CancellationToken()))
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await stream.CopyToAsync(memoryStream);
-                        recipe.ImageData = memoryStream.ToArray();
-                    }
-                }
-                else if (recipeImage.Source is FileImageSource fileImageSource && fileImageSource.File != null)
-                {
-                    recipe.ImageData = File.ReadAllBytes(fileImageSource.File);
-                }
-
-                await App.Database.SaveRecipeAsync(recipe);
-
-                var updatedRecipe = await App.Database.GetRecipeAsync(recipe.Id);
-
-                if (updatedRecipe != null)
-                {
-                    BindingContext = updatedRecipe;
-                    await Navigation.PopAsync();
-                }
-                else
-                {
-                    Console.WriteLine("GetRecipeAsync returned null");
+                    await stream.CopyToAsync(memoryStream);
+                    recipe.ImageData = memoryStream.ToArray();
                 }
             }
-            catch (Exception ex)
+            else if (recipeImage.Source is FileImageSource fileImageSource && fileImageSource.File != null)
             {
-                Console.WriteLine($"Save Button Exception: {ex.Message}");
+                recipe.ImageData = File.ReadAllBytes(fileImageSource.File);
+            }
+
+            await App.Database.SaveRecipeAsync(recipe);
+
+            var updatedRecipe = await App.Database.GetRecipeAsync(recipe.Id);
+
+            if (updatedRecipe != null)
+            {
+                BindingContext = updatedRecipe;
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -155,9 +146,7 @@ namespace p3
         {
             base.OnAppearing();
 
-            try
-            {
-                var recipe = (Recipe)BindingContext;
+              var recipe = (Recipe)BindingContext;
 
                 if (recipe == null)
                 {
@@ -171,28 +160,21 @@ namespace p3
 
                 if (recipe.Id != 0)
                 {
-                    // Fetch the recipe's image data asynchronously
                     Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
 
-                    // Wait for the image data to be retrieved
                     await getDataTask;
 
-                    // Update the recipeImage's source if the image data is valid
                     if (recipe.ImageData != null)
                     {
                         recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
                     }
 
-                    // Retrieve the recipe ingredients and set them as the source of the recipeView list
                     recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in OnAppearing: {ex.Message}");
-            }
+            
         }
 
 
     }
 }
+

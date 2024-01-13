@@ -5,7 +5,6 @@ namespace p3
     public partial class IngredientPage : ContentPage
     {
         Recipe r;
-        //RecipePage recipePage;
 
         public IngredientPage(Recipe rec)
         {

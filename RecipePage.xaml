@@ -12,7 +12,7 @@
                 HeightRequest="50" />
 
         <Editor Placeholder="Enter the description of the recipe"
-                Text="{Binding Description}"
+                Text="{Binding Instruction}"
                 HeightRequest="100" />
 
         <Button Text="Select Image" Clicked="OnSelectImageButtonClicked" />
@@ -28,20 +28,20 @@
         </Grid>
 
         <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked" Margin="0,10,0,10"/>
-        
-        
 
-        <ListView x:Name="recipeView"
-                  Margin="20">
+
+       
+        <Label>Ingredients:</Label>
+        <ListView x:Name="recipeView" Margin="20">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Detail="{Binding RecipeIngredients}"/>
+                    <TextCell Detail="{Binding Description}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
         <Label Text="Select Category" Margin="0,0,0,10"/>
-        <Picker x:Name="categoryPicker" SelectedItem="{Binding Category, Mode=TwoWay}" ItemDisplayBinding="{Binding CategoryName}" Margin="0,0,0,10">
+        <Picker x:Name="categoryPicker" SelectedItem="{Binding Category}" ItemDisplayBinding="{Binding CategoryName}" Margin="0,0,0,10">
             <Picker.ItemsSource>
                 <x:Array Type="{x:Type local:RecipeCategory}">
                     <local:RecipeCategory CategoryName="Desert" />

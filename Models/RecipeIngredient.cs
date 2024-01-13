@@ -14,8 +14,8 @@ namespace p3.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         [ForeignKey(typeof(Recipe))]
-        public int? RecipeId { get; set; }
+        public int RecipeId { get; set; }
         [ForeignKey(typeof(Ingredient))]
-        public int? IngredientId { get; set; }
+        public int IngredientId { get; set; }
     }
 }

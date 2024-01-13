@@ -14,6 +14,6 @@ namespace p3.Models
         public int Id { get; set; }
         public string? Description { get; set; }
         [OneToMany]
-        public List<RecipeIngredient>? RecipeIngredients { get; set; }
+        public List<RecipeIngredient> RecipeIngredients { get; set; }
     }
 }
