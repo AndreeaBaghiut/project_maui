@@ -22,53 +22,48 @@ namespace p3
 
         async Task AddPredefinedCategories()
         {
-            try
-            {
-                // Add predefined categories only if they don't exist
-                var predefinedCategories = new List<RecipeCategory>
-        {
-            new RecipeCategory { CategoryName = "Desert" },
-            new RecipeCategory { CategoryName = "Mic-dejun" },
-            new RecipeCategory { CategoryName = "Prânz" },
-            new RecipeCategory { CategoryName = "Cină" },
-            new RecipeCategory { CategoryName = "Festiv" }
-        };
+                // Verificați dacă categoriile predefinite există deja în baza de date
+                var existingCategories = await App.Database.GetCategoriesAsync();
 
-                foreach (var category in predefinedCategories)
+                if (existingCategories.Count == 0)
                 {
-                    var existingCategory = await App.Database.GetCategoryByNameAsync(category.CategoryName);
+                    // Adăugați categoriile predefinite doar dacă nu există deja în baza de date
+                    var predefinedCategories = new List<RecipeCategory>
+            {
+                new RecipeCategory { CategoryName = "Desert" },
+                new RecipeCategory { CategoryName = "Mic-dejun" },
+                new RecipeCategory { CategoryName = "Prânz" },
+                new RecipeCategory { CategoryName = "Cină" },
+                new RecipeCategory { CategoryName = "Festiv" }
+            };
 
-                    if (existingCategory == null)
+                    foreach (var category in predefinedCategories)
                     {
-                        // Category doesn't exist, so save it
-                        await App.Database.SaveCategoryAsync(category);
+                        var existingCategory = await App.Database.GetCategoryByNameAsync(category.CategoryName);
+
+                        if (existingCategory == null)
+                        {
+                            // Categoria nu există deja, deci o salvăm
+                            await App.Database.SaveCategoryAsync(category);
+                        }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in AddPredefinedCategories: {ex.Message}");
-            }
-        }
-
-
+           
+        
 
         async void LoadCategories()
         {
-            try
-            {
+           
                 var categories = await App.Database.GetCategoriesAsync();
                 categoryListView.ItemsSource = categories;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in LoadCategories: {ex.Message}");
-            }
+            
+           
         }
 
         async void OnCategorySelected(object sender, EventArgs e)
         {
-            if (e is SelectedItemChangedEventArgs args)
+            if (e is SelectedItemChangedEventArgs args && args.SelectedItem != null)
             {
                 var selectedCategory = (RecipeCategory)args.SelectedItem;
 
@@ -76,6 +71,7 @@ namespace p3
                 await Navigation.PushAsync(new RecipesByCategoryPage(selectedCategory.Id));
             }
         }
+
 
     }
 }

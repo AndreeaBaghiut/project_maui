@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,17 +18,15 @@ namespace p3
 
         async void LoadRecipesByCategory(int categoryId)
         {
-            try
-            {
+            
                 var recipes = await App.Database.GetRecipesByCategoryAsync(categoryId);
-                recipesByCategoryListView.ItemsSource = recipes;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in LoadRecipesByCategory: {ex.Message}");
-            }
-        }
 
+                if (recipes != null && recipes.Any())
+                {
+                    recipesByCategoryListView.ItemsSource = recipes;
+                }            
+      }
+            
         async void OnCategorySelected(object sender, SelectedItemChangedEventArgs e)
         {
             if (e.SelectedItem == null)

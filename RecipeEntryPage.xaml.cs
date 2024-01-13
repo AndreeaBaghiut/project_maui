@@ -13,8 +13,16 @@ namespace p3
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            recipeView.ItemsSource = await App.Database.GetRecipeAsync();
+
+            var recipes = await App.Database.GetRecipeAsync();
+
+            if (recipeView != null)
+            {
+                recipeView.ItemsSource = recipes;
+            }
+
         }
+
 
         async void OnRecipeAddedClicked(object sender, EventArgs e)
         {

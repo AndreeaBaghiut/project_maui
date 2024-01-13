@@ -58,6 +58,9 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\images.png" />
+	  <None Remove="Resources\Images\img.png" />
+	  <None Remove="Resources\Images\imgg.png" />
+	  <None Remove="Resources\Images\imggg.png" />
 	  <None Remove="Resources\Images\poza.png" />
 	</ItemGroup>
 

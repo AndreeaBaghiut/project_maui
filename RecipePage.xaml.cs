@@ -8,6 +8,8 @@ namespace p3
 {
     public partial class RecipePage : ContentPage
     {
+        public List<RecipeCategory>? _categories;
+
         public RecipePage()
         {
             InitializeComponent();
@@ -90,9 +92,7 @@ namespace p3
                     return;
                 }
 
-                // Ensure category is set based on the selected item in the picker
                 recipe.Category = (RecipeCategory)categoryPicker.SelectedItem;
-
 
                 if (recipe.ImageData == null)
                 {
@@ -154,45 +154,37 @@ namespace p3
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var recipe = (Recipe)BindingContext;
-
-            if (recipe == null)
-            {
-                return;
-            }
 
             try
             {
-                var recipes = await App.Database.GetRecipeAsync();
+                var recipe = (Recipe)BindingContext;
 
-                if (recipes != null)
+                if (recipe == null)
                 {
-                    recipeView.ItemsSource = recipes;
+                    Console.WriteLine("Recipe is null");
+                    return;
                 }
-                else
+
+                recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
+                _categories = await App.Database.GetCategoriesAsync();
+                categoryPicker.ItemsSource = _categories;
+
+                if (recipe.Id != 0)
                 {
-                    recipe.ImageData = new byte[0]; // Set default image data in case it's not set yet
-                    recipeImage.Source = ImageSource.FromResource("p3.Assets.NoImageAvailable.png"); // Display default image
+                    // Fetch the recipe's image data asynchronously
+                    Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
 
-                    if (recipe.Id != 0)
+                    // Wait for the image data to be retrieved
+                    await getDataTask;
+
+                    // Update the recipeImage's source if the image data is valid
+                    if (recipe.ImageData != null)
                     {
-                        // Fetch the recipe's image data asynchronously
-                        Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
-
-                        // Wait for the image data to be retrieved
-                        await getDataTask;
-
-                        // Update the recipeImage's source if the image data is valid
-                        if (recipe.ImageData != null)
-                        {
-                            recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
-                        }
-
-                        // Retrieve the recipe ingredients and set them as the source of the recipeView list
-                        recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
-                        categoryPicker.SelectedItem = recipe.Category;
-
+                        recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
                     }
+
+                    // Retrieve the recipe ingredients and set them as the source of the recipeView list
+                    recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
                 }
             }
             catch (Exception ex)

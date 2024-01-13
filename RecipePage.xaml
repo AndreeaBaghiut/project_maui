@@ -4,10 +4,9 @@
              x:Class="p3.RecipePage"
              xmlns:local="clr-namespace:p3.Models"
              Title="Recipe">
-         
 
-    <StackLayout Margin="20">
-        
+    <StackLayout Margin="20" Spacing="10">
+
         <Editor Placeholder="Enter the title of the recipe"
                 Text="{Binding Title}"
                 HeightRequest="50" />
@@ -15,11 +14,6 @@
         <Editor Placeholder="Enter the description of the recipe"
                 Text="{Binding Description}"
                 HeightRequest="100" />
-
-        <Editor Placeholder="Enter the ingredients"
-                Text="{Binding Ingredients}"
-                HeightRequest="100" />
-
 
         <Button Text="Select Image" Clicked="OnSelectImageButtonClicked" />
 
@@ -33,18 +27,21 @@
             <Button Grid.Column="1" Text="Delete" Clicked="OnDeleteButtonClicked" />
         </Grid>
 
-        <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked"/>
+        <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked" Margin="0,10,0,10"/>
+        
+        
 
-        <ListView x:Name="recipeView" Margin="20">
+        <ListView x:Name="recipeView"
+                  Margin="20">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Detail="{Binding Description}" />
+                    <TextCell Detail="{Binding RecipeIngredients}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <Label Text="Select Category" />
-        <Picker x:Name="categoryPicker" SelectedItem="{Binding Category, Mode=TwoWay}" ItemDisplayBinding="{Binding CategoryName}">
+        <Label Text="Select Category" Margin="0,0,0,10"/>
+        <Picker x:Name="categoryPicker" SelectedItem="{Binding Category, Mode=TwoWay}" ItemDisplayBinding="{Binding CategoryName}" Margin="0,0,0,10">
             <Picker.ItemsSource>
                 <x:Array Type="{x:Type local:RecipeCategory}">
                     <local:RecipeCategory CategoryName="Desert" />
@@ -57,5 +54,6 @@
         </Picker>
 
         <Image x:Name="recipeImage" Source="{Binding ImageData, Converter={StaticResource ByteArrayToImageSourceConverter}}" Aspect="AspectFit" HeightRequest="150" />
+
     </StackLayout>
 </ContentPage>
