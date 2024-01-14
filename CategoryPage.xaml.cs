@@ -11,7 +11,7 @@ namespace p3
         public CategoryPage()
         {
             InitializeComponent();
-             AddPredefinedCategories();
+            AddPredefinedCategories();
         }
 
         protected override void OnAppearing()
@@ -22,43 +22,40 @@ namespace p3
 
         async Task AddPredefinedCategories()
         {
-                // Verificați dacă categoriile predefinite există deja în baza de date
-                var existingCategories = await App.Database.GetCategoriesAsync();
+            var existingCategories = await App.Database.GetCategoriesAsync();
 
-                if (existingCategories.Count == 0)
-                {
-                    // Adăugați categoriile predefinite doar dacă nu există deja în baza de date
-                    var predefinedCategories = new List<RecipeCategory>
+            if (existingCategories.Count == 0)
             {
-                new RecipeCategory { CategoryName = "Desert" },
-                new RecipeCategory { CategoryName = "Mic-dejun" },
-                new RecipeCategory { CategoryName = "Prânz" },
-                new RecipeCategory { CategoryName = "Cină" },
-                new RecipeCategory { CategoryName = "Festiv" }
-            };
+                var predefinedCategories = new List<RecipeCategory>
+      {
+        new RecipeCategory { CategoryName = "Desert" },
+        new RecipeCategory { CategoryName = "Mic-dejun" },
+        new RecipeCategory { CategoryName = "Prânz" },
+        new RecipeCategory { CategoryName = "Cină" },
+        new RecipeCategory { CategoryName = "Festiv" }
+      };
 
-                    foreach (var category in predefinedCategories)
+                foreach (var category in predefinedCategories)
+                {
+                    var existingCategory = await App.Database.GetCategoryByNameAsync(category.CategoryName);
+
+                    if (existingCategory == null)
                     {
-                        var existingCategory = await App.Database.GetCategoryByNameAsync(category.CategoryName);
-
-                        if (existingCategory == null)
-                        {
-                            // Categoria nu există deja, deci o salvăm
-                            await App.Database.SaveCategoryAsync(category);
-                        }
+                        await App.Database.SaveCategoryAsync(category);
                     }
                 }
             }
-           
-        
+        }
+
+
 
         async void LoadCategories()
         {
-           
-                var categories = await App.Database.GetCategoriesAsync();
-                categoryListView.ItemsSource = categories;
-            
-           
+
+            var categories = await App.Database.GetCategoriesAsync();
+            categoryListView.ItemsSource = categories;
+
+
         }
 
         async void OnCategorySelected(object sender, EventArgs e)
@@ -67,7 +64,6 @@ namespace p3
             {
                 var selectedCategory = (RecipeCategory)args.SelectedItem;
 
-                // Navigate to the RecipesByCategoryPage for the selected category
                 await Navigation.PushAsync(new RecipesByCategoryPage(selectedCategory.Id));
             }
         }

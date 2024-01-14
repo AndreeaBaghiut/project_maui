@@ -18,8 +18,6 @@ namespace p3
 
         async void CheckAndRequestStoragePermission()
         {
-            try
-            {
                 var status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
 
                 if (status != PermissionStatus.Granted)
@@ -32,16 +30,9 @@ namespace p3
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception: {ex.Message}");
-            }
-        }
 
         async void OnSelectImageButtonClicked(object sender, EventArgs e)
         {
-            try
-            {
                 var recipe = (Recipe)BindingContext;
 
                 if (recipe != null)
@@ -61,13 +52,8 @@ namespace p3
                 }
                 else
                 {
-                    Console.WriteLine("BindingContext is null in OnSelectImageButtonClicked");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in OnSelectImageButtonClicked: {ex.Message}");
-            }
+                    return;
+                }          
         }
 
         async Task<byte[]> ImageToBytes(FileResult image)
@@ -146,35 +132,34 @@ namespace p3
         {
             base.OnAppearing();
 
-              var recipe = (Recipe)BindingContext;
+            var recipe = (Recipe)BindingContext;
 
-                if (recipe == null)
+            if (recipe == null)
+            {
+                Console.WriteLine("Recipe is null");
+                return;
+            }
+
+            recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
+            _categories = await App.Database.GetCategoriesAsync();
+            categoryPicker.ItemsSource = _categories;
+
+            if (recipe.Id != 0)
+            {
+                Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
+
+                await getDataTask;
+
+                if (recipe.ImageData != null)
                 {
-                    Console.WriteLine("Recipe is null");
-                    return;
+                    recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
                 }
 
                 recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
-                _categories = await App.Database.GetCategoriesAsync();
-                categoryPicker.ItemsSource = _categories;
+            }
 
-                if (recipe.Id != 0)
-                {
-                    Task<byte[]> getDataTask = Task.Run(() => recipe.ImageData);
-
-                    await getDataTask;
-
-                    if (recipe.ImageData != null)
-                    {
-                        recipeImage.Source = ImageSource.FromStream(() => new MemoryStream(recipe.ImageData));
-                    }
-
-                    recipeView.ItemsSource = await App.Database.GetRecipeIngredientsAsync(recipe.Id);
-                }
-            
         }
 
 
     }
 }
-

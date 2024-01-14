@@ -22,15 +22,6 @@ namespace p3.Data
             _database.CreateTableAsync<RecipeIngredient>().Wait();
             _database.CreateTableAsync<RecipeCategory>().Wait();
         }
-
-
-        // public async Task InitializeAsync()
-        //{
-        //  await _database.CreateTableAsync<Recipe>().ConfigureAwait(false);
-        //await _database.CreateTableAsync<Ingredient>().ConfigureAwait(false);
-        //await _database.CreateTableAsync<RecipeIngredient>().ConfigureAwait(false);
-        //}
-
         public Task<List<Recipe>> GetRecipeAsync()
         {
             return _database.Table<Recipe>().ToListAsync();
@@ -132,6 +123,10 @@ namespace p3.Data
                 .FirstOrDefaultAsync();
         }
 
+        public Task<RecipeIngredient> GetRecipeIngredientAsync(int id)
+        {
+            return _database.Table<RecipeIngredient>().FirstOrDefaultAsync(item => item.Id == id);
+        }
 
     }
 }

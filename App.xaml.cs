@@ -14,7 +14,6 @@ namespace p3
             {
                 if (database == null)
                 {
-                    // string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Recipe.db3");
                     database = new
 RecipeDatabase(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.
 LocalApplicationData), "RecipeDatabase.db3"));

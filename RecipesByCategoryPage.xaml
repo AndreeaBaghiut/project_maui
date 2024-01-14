@@ -7,7 +7,6 @@
     <StackLayout Margin="20">
         <Label Text="{Binding CategoryName}" FontSize="Title" HorizontalOptions="Center" />
 
-        <!-- Adăugați x:Name pentru ListView -->
         <ListView x:Name="recipesByCategoryListView">
             <ListView.ItemTemplate>
                 <DataTemplate>

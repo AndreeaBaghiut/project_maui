@@ -10,23 +10,35 @@ namespace p3
 {
     public partial class RecipesByCategoryPage : ContentPage
     {
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+
+            
+        }
         public RecipesByCategoryPage(int categoryId)
         {
+            if (categoryId == null)
+            {
+                throw new ArgumentNullException(nameof(categoryId));
+            }
+
             InitializeComponent();
-            LoadRecipesByCategory(categoryId);
         }
 
-        async void LoadRecipesByCategory(int categoryId)
+        public async Task LoadRecipesByCategory(int categoryId)
         {
-            
-                var recipes = await App.Database.GetRecipesByCategoryAsync(categoryId);
+            var recipes = await App.Database.GetRecipesByCategoryAsync(categoryId);
 
-                if (recipes != null && recipes.Any())
-                {
-                    recipesByCategoryListView.ItemsSource = recipes;
-                }            
-      }
-            
+            if (recipes != null && recipes.Any())
+            {
+                recipesByCategoryListView.ItemsSource = recipes;
+            }
+        }
+
+
         async void OnCategorySelected(object sender, SelectedItemChangedEventArgs e)
         {
             if (e.SelectedItem == null)
@@ -34,16 +46,12 @@ namespace p3
 
             var selectedCategory = (RecipeCategory)e.SelectedItem;
 
-            // Ensure selectedCategory is not null
-            if (selectedCategory != null)
-            {
-                // Navigate to a page where you display recipes associated with the selected category
-                await Navigation.PushAsync(new RecipesByCategoryPage(selectedCategory.Id));
-            }
+            await LoadRecipesByCategory(selectedCategory.Id);
 
-    // Deselect the item
-    ((ListView)sender).SelectedItem = null;
+            ((ListView)sender).SelectedItem = null;
         }
+
 
     }
 }
+

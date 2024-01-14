@@ -5,7 +5,6 @@ namespace p3
     public partial class IngredientPage : ContentPage
     {
         Recipe r;
-
         public IngredientPage(Recipe rec)
         {
             InitializeComponent();
@@ -47,11 +46,15 @@ namespace p3
                 };
 
                 await App.Database.SaveRecipeIngredientAsync(rp);
+
+                rp = await App.Database.GetRecipeIngredientAsync(rp.Id);
+
                 i.RecipeIngredients = new List<RecipeIngredient> { rp };
 
                 await Navigation.PopAsync();
             }
         }
+
 
         //{
         //  if (recipeView.SelectedItem is Ingredient selectedIngredient)

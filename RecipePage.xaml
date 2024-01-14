@@ -30,16 +30,15 @@
         <Button Text="Add ingredient to the recipe" MaximumWidthRequest="300" Clicked="OnChooseButtonClicked" Margin="0,10,0,10"/>
 
 
-       
+
         <Label>Ingredients:</Label>
         <ListView x:Name="recipeView" Margin="20">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Detail="{Binding Description}" />
+                    <TextCell Detail="{Binding Ingredient.Description}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
         <Label Text="Select Category" Margin="0,0,0,10"/>
         <Picker x:Name="categoryPicker" SelectedItem="{Binding Category}" ItemDisplayBinding="{Binding CategoryName}" Margin="0,0,0,10">
             <Picker.ItemsSource>
@@ -52,6 +51,7 @@
                 </x:Array>
             </Picker.ItemsSource>
         </Picker>
+
 
         <Image x:Name="recipeImage" Source="{Binding ImageData, Converter={StaticResource ByteArrayToImageSourceConverter}}" Aspect="AspectFit" HeightRequest="150" />
 
